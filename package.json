@@ -1,0 +1,21 @@
+{
+    "name": "nuxt-coffee",
+    "version": "0.1.2",
+    "description": "A (very hacky) module to add CoffeeScript support to Nuxt 3",
+    "main": "index.js",
+    "type": "module",
+    "license": "MIT",
+    "keywords": [
+        "coffeescript",
+        "compiler",
+        "nuxt"
+    ],
+    "author": {
+        "name": "Ghaith Tarawneh",
+        "url": "https://github.com/gtarawneh"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/gtarawneh/nuxt-coffee.git"
+    }
+}
