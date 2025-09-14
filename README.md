@@ -2,6 +2,12 @@
 
 Adds CoffeeScript support to Vue SFCs (`<script lang="coffee">`) and `.coffee` files in Nuxt projects using Vite.
 
+### Usage
+
+```
+yarn add nuxt-coffee@github:gtarawneh/nuxt-coffee
+```
+
 ### Limitations and Caveats
 
 - Only works with Nuxt projects using Vite as the builder.
