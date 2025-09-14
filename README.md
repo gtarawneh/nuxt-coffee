@@ -9,7 +9,7 @@ This is a simple loader for anyone who wants to enjoy the ergonomics of CoffeeSc
 First, install the package:
 
 ```
-yarn add nuxt-coffee@github:gtarawneh/nuxt-coffee
+yarn add --dev nuxt-coffee@github:gtarawneh/nuxt-coffee
 ```
 
 Then, add the module to your Nuxt config:
