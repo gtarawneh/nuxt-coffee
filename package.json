@@ -1,6 +1,6 @@
 {
     "name": "nuxt-coffee",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "description": "A (very hacky) module to add CoffeeScript support to Nuxt 3",
     "main": "index.js",
     "type": "module",

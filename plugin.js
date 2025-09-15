@@ -75,12 +75,26 @@ function load(id) {
     return null;
 }
 
+function createCompilationError(error) {
+    const detailed = new Error("Compilation Error");
+
+    if (error.location) {
+        const line = error.location.first_line + 1;
+        const column = error.location.first_column;
+        detailed.loc = { line, column };
+    } else {
+        detailed.loc = undefined;
+    }
+
+    return detailed;
+}
+
 function transform(code, id) {
     if (isCoffeeFile(id)) {
         try {
             return { code: compile(code, id) };
         } catch (error) {
-            this.error(`Failed to compile CoffeeScript file ${id}: ${error.message}`);
+            throw createCompilationError(error);
         }
     }
 
