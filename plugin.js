@@ -13,6 +13,24 @@ function isVueFile(id) {
     return id.endsWith(".vue");
 }
 
+function generateFrame(code, line, column) {
+    const lines = code.split('\n');
+    const start = Math.max(0, line - 4);
+    const end = Math.min(lines.length, line + 5);
+    const width = String(end).length;
+    const result = [];
+
+    for (let i = start; i < end; i++) {
+        const marker = i === line ? '>' : ' ';
+        result.push(`${marker} ${String(i + 1).padStart(width)} | ${lines[i]}`);
+        if (i === line) {
+            result.push(`  ${' '.repeat(width)} |  ${' '.repeat(column)}^`);
+        }
+    }
+
+    return "Lines:\n\n" + result.join('\n');
+}
+
 function createCompileException(originalException, startLineNumber, fileCode) {
     const { location } = originalException;
 
@@ -22,8 +40,14 @@ function createCompileException(originalException, startLineNumber, fileCode) {
     }
     originalException.code = fileCode;
 
-    const exception = new Error(String(originalException));
+    const exception = new Error(originalException.message);
     exception.stack = null;
+
+    if (location) {
+        exception.loc = { line: location.first_line + 1, column: location.first_column };
+        exception.frame = generateFrame(fileCode, location.first_line, location.first_column);
+    }
+
     return exception;
 }
 
@@ -53,7 +77,6 @@ function transformCoffeescript(code, filename) {
             const compiled = compile(coffeeCode, filename, startLineNumber, code);
             return `<script>\n${compiled}\n</script>`;
         } catch (error) {
-            console.error(`CoffeeScript compilation error in ${filename}:`, error.message);
             throw error;
         }
     });
@@ -68,20 +91,25 @@ function load(id) {
                 return transformCoffeescript(content, id);
             }
         } catch (error) {
-            this.error(`Failed to process Vue file ${id}: ${error.message}`);
+            this.error({
+                message: error.message,
+                loc: error.loc ? { file: id, ...error.loc } : undefined,
+                frame: error.frame
+            });
         }
     }
 
     return null;
 }
 
-function createCompilationError(error) {
-    const detailed = new Error("Compilation Error");
+function createCompilationError(error, id, code) {
+    const detailed = new Error(error.message);
 
     if (error.location) {
         const line = error.location.first_line + 1;
         const column = error.location.first_column;
-        detailed.loc = { line, column };
+        detailed.loc = { file: id, line, column };
+        detailed.frame = generateFrame(code, error.location.first_line, error.location.first_column);
     } else {
         detailed.loc = undefined;
     }
@@ -94,7 +122,7 @@ function transform(code, id) {
         try {
             return { code: compile(code, id) };
         } catch (error) {
-            throw createCompilationError(error);
+            throw createCompilationError(error, id, code);
         }
     }
 
