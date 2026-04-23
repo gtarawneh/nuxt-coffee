@@ -24,7 +24,7 @@ function generateFrame(code, line, column) {
         const marker = i === line ? '>' : ' ';
         result.push(`${marker} ${String(i + 1).padStart(width)} | ${lines[i]}`);
         if (i === line) {
-            result.push(`  ${' '.repeat(width)} |  ${' '.repeat(column)}^`);
+            result.push(`  ${' '.repeat(width)} | ${' '.repeat(column)}^`);
         }
     }
 
@@ -35,7 +35,7 @@ function createCompileException(originalException, startLineNumber, fileCode) {
     const { location } = originalException;
 
     if (location) {
-        location.first_line = location.first_line + startLineNumber;
+        location.first_line = location.first_line + startLineNumber + 1;
         location.last_line = location.last_line + startLineNumber;
     }
     originalException.code = fileCode;
