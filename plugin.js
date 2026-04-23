@@ -102,28 +102,17 @@ function transform(code, id) {
 }
 
 function handleHotUpdate(ctx) {
-    const { file, server } = ctx;
+    const { file } = ctx;
 
-    if (isVueFile(file)) {
-        try {
-            const content = readFile(file);
+    if (!isVueFile(file))
+        return;
 
-            if (content.includes('<script lang="coffee">')) {
-                const module = server.moduleGraph.getModuleById(file);
-                if (module) {
-                    server.reloadModule(module);
-                }
+    const content = readFile(file);
 
-                // Return the original modules to let Vite handle other transformations
-                return ctx.modules;
-            }
-        } catch (error) {
-            console.error(`HMR error for ${file}:`, error.message);
-        }
-    }
+    if (!content.includes('<script lang="coffee">'))
+        return;
 
-    // Let other plugins handle their HMR
-    return ctx.modules;
+    ctx.read = () => transformCoffeescript(content, file);
 }
 
 export default {
